@@ -1,0 +1,33 @@
+version: '3.7'
+
+services:
+  mysql:
+    image: mysql
+    network_mode: bridge
+    container_name: serpscope_db
+    restart: on-failure
+    environment:
+      MYSQL_USER: root
+      MYSQL_DATABASE: serpscope_db
+      MYSQL_ROOT_PASSWORD: password # Password MYSQL Root
+    volumes:
+    - .docker/mysql:/var/lib/mysql  # Folder con los ficheros mysql
+  serpscope:
+    image: p3drojimenez/serpscope
+    network_mode: bridge
+    container_name: serpscope_ps # Nombre del contenedor ( debe ser único )
+    restart: on-failure
+    volumes:
+    - ./logs/:/var/log/serposcope
+    - ./data:/var/lib/serposcope
+    ports: 
+    - 7134:7134
+
+    environment:
+      MYSQL_USER: root
+      MYSQL_DATABASE: serpscope_db
+      MYSQL_ROOT_PASSWORD: password # Password MYSQL Root
+    depends_on:
+    - mysql
+    links:
+    - mysql
